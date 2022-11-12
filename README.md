@@ -5,6 +5,7 @@ Shared repository for the onboarding project for new members of the CEV autonomy
 # Project Plan
 
 - Read paper “End to End Learning for Self-Driving Cars”
+- Set up PyTorch [dataset classes](https://pytorch.org/tutorials/beginner/basics/data_tutorial.html) and stuff with the given data
 - Data augmentation - blur/crop/shadows(changing light levels)/add noise/rotate(change label for steering angle)
 - CNN (Pytorch)
 
