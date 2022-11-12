@@ -11,6 +11,6 @@ The data is stored in the `data/` directory, with images in `data/images/` and a
 ## Helpful Commands
 
 ```bash
-# update `environment.yml` with currently downloaded packages
-conda env export --no-builds > environment.yml
+# update environment after updating `environment.yml`
+conda env update --name onboarding --file environment.yml --prune
 ```
