@@ -16,11 +16,11 @@ class TurnNet(nn.Module):
         self.model = nn.Sequential(
             # convolve and ReLU (values from NVIDIA paper)
             # todo: the first couple should be strided
-            nn.Conv2d(3, 24, 5),
+            nn.Conv2d(3, 24, kernel_size=5, stride=2),
             nn.ReLU(),
-            nn.Conv2d(24, 36, 5),
+            nn.Conv2d(24, 36, kernel_size=5, stride=2),
             nn.ReLU(),
-            nn.Conv2d(36, 48, 5),
+            nn.Conv2d(36, 48, kernel_size=5, stride=2),
             nn.ReLU(),
             nn.Conv2d(48, 64, 3),
             nn.ReLU(),
@@ -29,7 +29,7 @@ class TurnNet(nn.Module):
             # flatten the data
             nn.Flatten(),
             # dense part
-            nn.Linear(1164, 100),
+            nn.Linear(1164, 100), # todo: I think that these numbers are wrong
             nn.ReLU(),
             nn.Linear(100, 50),
             nn.ReLU(),

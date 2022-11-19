@@ -19,6 +19,9 @@ for entry in loader:
     image = entry["image"]
     angle = entry["angle"]
 
+    # note: the NVIDIA paper assumes that the input planes are 3@66x200,
+    # but the ones that we have are 3@160@320. That is not the same!
+
     optimizer.zero_grad()
     result = model(image)
     # optimize MSE
