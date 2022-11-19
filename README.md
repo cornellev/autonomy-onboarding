@@ -1,6 +1,6 @@
 # Autonomy Onboarding Project
 
-Shared repository for the onboarding project for new members of the CEV autonomy subteam. The goal of this project is to predict a steering angle given camera inputs from left, center, and right cameras. Ideally, it would be able to happen in real time :0
+Shared repository for the onboarding project for new members of the CEV autonomy subteam. The goal of this project is to predict a steering angle given a single camera input image (even though we're given camera inputs from left, center, and right cameras). Ideally, it would be able to happen in real time :0
 
 # Project Plan
 
