@@ -13,7 +13,7 @@ class CarDrivingDataset(torch.utils.data.Dataset):
         labels = pd.read_csv("./data/labels.csv")
         # treat each camera input as a separate row
         self.labels = pd.concat(
-            labels.get([i, "steering angle"]).rename({ i, "image" }, axis=1)
+            labels.get([i, "steering angle"]).rename({ i: "image" }, axis=1)
             for i in ("left image", "center image", "right image")) 
 
         self.transform = transform
@@ -28,8 +28,9 @@ class CarDrivingDataset(torch.utils.data.Dataset):
         item = self.labels.iloc[index]
 
         file = os.path.join(".", "data", "images", item.loc["image"])
-        image = np.array(Image.open(file))
-        result["image"] = image
+        # normalize the image
+        image = np.array(Image.open(file), dtype=float)
+        result["image"] = image / 255
             
         # only actually get the steering angle value
         angle = item.loc["steering angle"]
