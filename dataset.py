@@ -26,6 +26,7 @@ class CarDrivingDataset(torch.utils.data.Dataset):
             image = np.array(Image.open(file))
             result[key] = image
             
+        # only actually get the steering angle value
         angle = item.loc["steering angle"]
         result["angle"] = angle
 
