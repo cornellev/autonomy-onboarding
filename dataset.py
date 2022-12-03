@@ -9,12 +9,14 @@ class CarDrivingDataset(torch.utils.data.Dataset):
     
     labels: pd.DataFrame
 
-    def __init__(self, transform=None) -> None:
+    def __init__(self, transform=None, shuffle=False) -> None:
         labels = pd.read_csv("./data/labels.csv")
         # treat each camera input as a separate row
         self.labels = pd.concat(
             labels.get([i, "steering angle"]).rename({ i: "image" }, axis=1)
             for i in ("left image", "center image", "right image")) 
+        if shuffle:
+            self.labels = self.labels.sample(frac=1)
 
         self.transform = transform
 

@@ -11,27 +11,55 @@ transform = Compose([ToTensor(), Resize((66, 200))])
 loader = DataLoader(CarDrivingDataset(transform=transform), batch_size=8, shuffle=True)
 
 model = TurnNet()
+model.train()
 model.to("cpu")
 
 # https://towardsdatascience.com/linear-regression-with-pytorch-eb6dedead817
 criterion = torch.nn.MSELoss()
-optimizer = torch.optim.Adam(model.parameters())
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
-for entry in loader:
-    image = entry["image"]
-    angle = entry["angle"]
+prevweights = None
 
-    # note: the NVIDIA paper assumes that the input planes are 3@66x200,
-    # but the ones that we have are 3@160@320. That is not the same!
+# https://github.com/christianversloot/machine-learning-articles/blob/main/how-to-create-a-neural-network-for-regression-with-pytorch.md
+# Run the training loop
+for epoch in range(0, 5): # 5 epochs at maximum
 
-    for i in range(0, image.shape[0]):
+    # Print epoch
+    print(f'Starting epoch {epoch+1}')
+
+    # Set current loss value
+    current_loss = 0.0
+
+    # Iterate over the DataLoader for training data
+    for i, data in enumerate(loader, 0):
+        inputs = data["image"].float()
+        targets = data["angle"].float()
+        targets = torch.reshape(targets, (targets.shape[0], 1))
+        
+        # Zero the gradients
         optimizer.zero_grad()
-        result = model(image[i])
-        # optimize MSE
-        loss = criterion(result, angle)
-        print(f"predicted {result} with loss {loss}")
-
+        
+        # Perform forward pass
+        outputs = model(inputs)
+        
+        # Compute loss
+        loss = criterion(outputs, targets)
+        
+        # Perform backward pass
         loss.backward()
+        
+        # Perform optimization
         optimizer.step()
+        
+        # Print statistics
+        current_loss += loss.item()
+        if i % 10 == 0:
+            print(f'Loss after mini-batch {i + 1:5d}: {current_loss / 10:.10f} for steering angle {outputs.tolist()}')
+            current_loss = 0.0
+
+# Process is complete.
+print('Training process has finished.')
+
+torch.save(model.state_dict(), "save.pth")
 
 pass

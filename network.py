@@ -27,7 +27,7 @@ class TurnNet(nn.Module):
         x=F.relu(self.conv3(x))
         x=F.relu(self.conv4(x))
         x=F.relu(self.conv5(x))
-        x = torch.flatten(x, 0)
+        x = torch.flatten(x, 1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = F.relu(self.fc3(x))
