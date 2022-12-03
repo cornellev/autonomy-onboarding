@@ -36,7 +36,7 @@ class CarDrivingDataset(torch.utils.data.Dataset):
             
         # only actually get the steering angle value
         angle = item.loc["steering angle"]
-        result["angle"] = angle
+        result["angle"] = np.float32(angle)
 
         if self.transform:
             result["image"] = self.transform(result["image"])

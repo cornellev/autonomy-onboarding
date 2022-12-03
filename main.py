@@ -24,13 +24,14 @@ for entry in loader:
     # note: the NVIDIA paper assumes that the input planes are 3@66x200,
     # but the ones that we have are 3@160@320. That is not the same!
 
-    optimizer.zero_grad()
-    result = model(image)
-    # optimize MSE
-    loss = criterion(result, angle)
-    print(f"predicted {result} with loss {loss}")
+    for i in range(0, image.shape[0]):
+        optimizer.zero_grad()
+        result = model(image[i])
+        # optimize MSE
+        loss = criterion(result, angle)
+        print(f"predicted {result} with loss {loss}")
 
-    loss.backward()
-    optimizer.step()
+        loss.backward()
+        optimizer.step()
 
 pass
