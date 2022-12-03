@@ -1,12 +1,14 @@
 import torch
 from torch.utils.data import DataLoader
+from torchvision.transforms import Resize, Compose, ToTensor
 
 from network import TurnNet
 from dataset import CarDrivingDataset
 
 
+transform = Compose([ToTensor(), Resize((66, 200))])
 # see https://discuss.pytorch.org/t/dictionary-in-dataloader/40448 for proper use
-loader = DataLoader(CarDrivingDataset(), batch_size=8, shuffle=True)
+loader = DataLoader(CarDrivingDataset(transform=transform), batch_size=8, shuffle=True)
 
 model = TurnNet()
 model.to("cpu")

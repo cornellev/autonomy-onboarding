@@ -32,14 +32,14 @@ class CarDrivingDataset(torch.utils.data.Dataset):
         image = np.array(Image.open(file), dtype=np.float32)
         # (i, j, rgb) -> (rgb, i, j)
         # todo: use YUV like the NIVIDIA paper
-        result["image"] = np.moveaxis(image / 255, 2, 0)
+        result["image"] = image / 255
             
         # only actually get the steering angle value
         angle = item.loc["steering angle"]
         result["angle"] = angle
 
         if self.transform:
-            result = self.transform(result)
+            result["image"] = self.transform(result["image"])
 
         return result
 
