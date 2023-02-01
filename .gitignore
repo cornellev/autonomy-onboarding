@@ -1,0 +1,8 @@
+training_data/
+udacity_data/
+.DS_Store
+
+.vscode/
+_archive/
+
+venv/
