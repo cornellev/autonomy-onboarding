@@ -4,6 +4,8 @@ Shared repository for the onboarding project for new members of the CEV autonomy
 
 The repo connects to a [Unity simulation](https://github.com/udacity/self-driving-car-sim/tree/Unity_2020_3) using `socketio`.
 
+> also yeah this repo was kinda dog
+
 ## Setup
 
 Setting up the environment is quite tricky. The original code was written before M1 chips existed, so I had to do some manual TensorFlow/Keras migration to get it to run properly. The following commands will set up a virtual environment and install the correct packages to run the code.
