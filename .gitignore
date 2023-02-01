@@ -5,4 +5,5 @@ udacity_data/
 .vscode/
 _archive/
 
-venv/
+venv*/
+__pycache__/
