@@ -1,3 +1,7 @@
+# because keras is dumb
+import collections.abc
+collections.Iterable = collections.abc.Iterable
+
 import argparse
 import base64
 import json
@@ -14,16 +18,15 @@ from flask import Flask, render_template
 from io import BytesIO
 
 from keras.models import model_from_json
-from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array
+from keras.preprocessing.image import ImageDataGenerator
 
 # Fix error with Keras and TensorFlow
 import tensorflow as tf
-tf.python.control_flow_ops = tf
 
 # import preprocess from model.py
 #from model import preprocess_image
 
-sio = socketio.Server()
+sio = socketio.Server(namespaces="*")
 app = Flask(__name__)
 model = None
 prev_image_array = None
@@ -52,6 +55,7 @@ def preprocess_image(img):
 
 @sio.on('telemetry')
 def telemetry(sid, data):
+    print("telemetry called")
     # The current steering angle of the car
     steering_angle = data["steering_angle"]
     # The current throttle of the car
