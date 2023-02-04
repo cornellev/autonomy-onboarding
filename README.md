@@ -9,6 +9,28 @@ Shared repository for the onboarding project for new members of the CEV autonomy
 - [ ] Try training a low-parameter Multi-Layer Perception
 - [ ] Once it works, scale up!
 
+## Setup
+
+Setting up the environment is quite tricky because TensorFlow does not have native support for Apple M1 Chips. The following commands will set up a virtual environment and install the correct packages to run the code.
+
+```bash
+# create the virtual environment
+python -m venv ./venv
+source ./venv/bin/activate
+# update pip
+python -m pip install -U pip
+```
+
+Instructions from [this Apple website](https://developer.apple.com/metal/tensorflow-plugin/) and a [related StackOverflow page](https://stackoverflow.com/questions/74792286/cant-get-tensorflow-working-on-macos-m1-pro-chip/74806936#74806936).
+
+```bash
+# install specific versions of M1 TensorFlow
+python -m pip install tensorflow-macos==2.9.0
+python -m pip install tensorflow-metal==0.5.0
+```
+
+The rest of the packages can be installed with `pip install -r requirements.txt` once we save them there.
+
 ## Data
 
 The dataset can be downloaded from [this Kaggle notebook](https://www.kaggle.com/datasets/andy8744/udacity-self-driving-car-behavioural-cloning?select=self_driving_car_dataset_jungle), and has a lot of images with associated direction labels. The images seem to be frames excerpted from a video, and a different analysis that Adams showed us revealed that the vast majority of the directions are pointing straight forward, which will need to be taken into account when dividing the images into training, validation, and testing sets.
