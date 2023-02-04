@@ -2,7 +2,6 @@ import tensorflow as tf
 import keras
 from keras.layers import *
 from keras import Sequential
-from keras.optimizers import SGD
 from keras.losses import MeanSquaredError
 
 from numpy import loadtxt
