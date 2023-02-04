@@ -25,8 +25,26 @@ Instructions from [this Apple website](https://developer.apple.com/metal/tensorf
 
 ```bash
 # install specific versions of M1 TensorFlow
-python -m pip install tensorflow-macos==2.9.0
-python -m pip install tensorflow-metal==0.5.0
+python -m pip install tensorflow-macos
+python -m pip install tensorflow-metal
+```
+
+Test that it works on your machine by entering a Python terminal and running the script below, which is a modify version of the verify script at the bottom of the Apple website above with a fix from the above StackOverflow link. If it starts training the first epoch, then everything installed correctly.
+
+```python
+import tensorflow as tf
+
+cifar = tf.keras.datasets.cifar100
+(x_train, y_train), (x_test, y_test) = cifar.load_data()
+model = tf.keras.applications.ResNet50(
+    include_top=True,
+    weights=None,
+    input_shape=(32, 32, 3),
+    classes=100,)
+
+loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+model.compile(optimizer=tf.keras.optimizers.legacy.Adam(), loss=loss_fn, metrics=["accuracy"])
+model.fit(x_train, y_train, epochs=5, batch_size=64)
 ```
 
 The rest of the packages can be installed with `pip install -r requirements.txt` once we save them there.
