@@ -19,4 +19,6 @@ The data is stored in the `data/` directory, with images in `data/images/` and a
 
 We got data loading successfully and after much debugging, figured out how to manipulate the shapes so that there weren't any errors when attempting to train. However, due irregularities in the data, the training was very difficult, and an over-fit model just always predicted the zero vector. Not exactly sure why, and we weren't sure what to try next...
 
-So we decided to just try to run the [Keras model already available online](https://github.com/jeremy-shannon/CarND-Behavioral-Cloning-Project). That
+So we decided to just try to run the [Keras model already available online](https://github.com/jeremy-shannon/CarND-Behavioral-Cloning-Project). That didn't work either, because we ignored a warning on its README that stated the project wasn't meant to be usable.
+
+After discussing with a Deep Learning nerd, we are going to try focusing more on cleaning the data and also training a simpler and smaller network to see whether it will work faster.
