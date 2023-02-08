@@ -3,49 +3,61 @@ import keras
 from keras.layers import *
 from keras import Sequential
 from keras.losses import MeanSquaredError
-#import pandas as pd
-from numpy import loadtxt
-import sys
+import pandas as pd
+import numpy as np
+from PIL import Image
+#from keras import preprocessing
+#from preprocessing import image.ImageDataGenerator
+
+# https://www.tensorflow.org/tutorials/load_data/pandas_dataframe
+# https://medium.com/analytics-vidhya/fastai-image-regression-age-prediction-based-on-image-68294d34f2ed
+
 
 # https://stackoverflow.com/questions/59568143/neural-network-with-float-labels
 # https://www.tensorflow.org/tutorials/keras/regression
 # https://keras.io/api/data_loading/
 # https://stackoverflow.com/questions/62877412/how-to-load-image-data-for-regression-with-keras
 # load the dataset
-#data_dir = "/Users/eric/cev/autonomy-onboarding-2022/data/images"
-data_dir = "data/images"
+
+data_dir = r"./data/images/"
 # Neither absolute nor relative path detects images in the directory
 
-#raw_dataset = pd.read_csv(data_dir, names=column_names,
-#                          na_values='?', comment='\t',
-#                          sep=' ', skipinitialspace=True)
+csv = pd.read_csv("data/log.csv")
 
-#dataset = loadtxt('ZZZZZZZ.csv', delimiter=',') #FILL IN NAME HERE
+# get only labels
+angles_ = csv.get(["angle"])
+angles = np.array(angles_['angle'].tolist())
+# print(labels)
 
-dataset = tf.keras.preprocessing.image_dataset_from_directory(
-    data_dir, image_size=(320, 160), batch_size=64
-)
+centers_ = csv.get(["center"])
+centers = centers_['center'].tolist()
+# get dataframe with image path and angle
+df = csv.loc[:,['center','angle']]
+# print(df)
+# has shape (N, H*W*3) for N images
+images = np.array([np.array(Image.open(f"data/images/{f}")).ravel() for f in centers])
+#dataset = tf.keras.utils.image_dataset_from_directory(
+#    directory = data_dir,
+#    labels = angles,
+#    image_size=(160, 320))
+# ValueError: Expected the lengths of `labels` to match the number of files in the target directory.
+# len(labels) is 3404 while we found 0 files in directory data/images/.
+print(dataset)
+#dataset = tf.keras.preprocessing.image_dataset_from_directory(
+#    data_dir, image_size=(320, 160), batch_size=64
+#)
 
-# Need assistance loading data
-# Issue: Center, Right, and Left images are all in 1 folder 
-# and not labeled with steering angle
-# I cannot figure out a way to load the data with the labels
-# Option 1:
-# The CSV only has the paths to the images and angle
-# Most functions want to load images from a series of files in labeled folders
-# Or they want the images themselves labeled
-# Solution 1:
-# Label the data by putting it into folders (reduces accuracy)
-# Solution 2:
-# Find a way to label the data with each file name
-
-# Option 2:
-# Load the data from a CSV file
-# We dont have any of the image data in the CSV file
-#
-# Solution:
-# I'm not sure
-
+#DOES NOT WORK YET
+#train_data_gen = image_generator.flow_from_dataframe(dataframe=train_df,
+#                                                     x_col='filename',
+#                                                     y_col='regression_val',
+#                                                     batch_size=BATCH_SIZE,
+#                                                     shuffle=True,
+#                                                     target_size=(IMG_HEIGHT, IMG_WIDTH))
+# Need assistance loading data:
+# Deleted left and Right images to simplify the problem
+# Has labels loaded from CSV file
+# Cannot load images and labels imto a datagenerator 
 
 # Make training/testing data
 x_train = dataset[:,:] # ADD
@@ -71,6 +83,8 @@ model.add(Dense(1))
 
 # compile model
 model.compile(loss=MeanSquaredError(), optimizer='adam', metrics=['accuracy']) #asdg
+
+print(model.summary())
 
 model.fit(x_train, y_train, epochs=100, batch_size=20)
 
