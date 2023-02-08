@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 def show_angle(image, angle, color=(1, 0, 0)):
     """ Given an input image (as a numpy array) and associated steering angle (between -1 and 1), returns a new image with a vector plotted on it representing the associated steering angle. Uses color, which is optional and should be an array-like of length 3."""
