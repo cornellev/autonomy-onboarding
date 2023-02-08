@@ -55,6 +55,13 @@ The dataset can be downloaded from [this Kaggle notebook](https://www.kaggle.com
 
 The data is stored in the `data/` directory, with images in `data/images/` and a `.csv` file linking each image with a direction number value `data/labels.csv`. The labels were downloaded from the above Kaggle notebook, but had absolute paths to the image files that needed to be cleaned up.
 
+We are implementing data augmentation in order to reduce the bias toward a 0 degree steering angle for all outputs. The methods we will be attempting are the following
+- color changing (black and white, red/blue/green color shift, etc.)
+- blur
+- shear + crop
+
+We are not augmenting the data by flipping the image, as this will put the center lines of the road on the right side of the driver, which will mess up the steering angle calculations.
+
 ## Progress
 
 We got data loading successfully and after much debugging, figured out how to manipulate the shapes so that there weren't any errors when attempting to train. However, due irregularities in the data, the training was very difficult, and an over-fit model just always predicted the zero vector. Not exactly sure why, and we weren't sure what to try next...
