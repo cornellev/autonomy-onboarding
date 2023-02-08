@@ -66,6 +66,9 @@ We are implementing data augmentation in order to reduce the bias toward a 0 deg
 - color changing (black and white, red/blue/green color shift, etc.)
 - blur
 - shear + crop
+- brightness adjusting
+- saturation
+- contrast
 
 We are not augmenting the data by flipping the image, as this will put the center lines of the road on the right side of the driver, which will mess up the steering angle calculations.
 
