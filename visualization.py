@@ -12,7 +12,7 @@ def show_angle(image, angle):
 
 
     #is the conversion correct and does this length work?
-    angle = angle * 180
+    angle = angle * 25
     length = 50
 
     #plot steering angle vector
@@ -41,8 +41,8 @@ def show_2_angles(image, angle1, angle2):
     ax.imshow(image, cmap='gray')
 
     #is the conversion correct and does this length work?
-    angle1= angle1*180
-    angle2= angle2*180
+    angle1= angle1*25
+    angle2= angle2*25
     length = 50
 
     #plot vectors
