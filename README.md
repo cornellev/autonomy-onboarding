@@ -11,7 +11,14 @@ Shared repository for the onboarding project for new members of the CEV autonomy
 
 ## Setup
 
-Setting up the environment is quite tricky because TensorFlow does not have native support for Apple M1 Chips. The following commands will set up a virtual environment and install the correct packages to run the code.
+Setting up the environment is quite tricky because TensorFlow does not have native support for Apple M1 Chips. The following commands will set up a virtual environment and install the correct packages to run the code. Note that this setup depends heavily on the specific Python version. We aren't sure exactly which versions do or don't work and why, but we know all of the setup works with Python `3.10.5`.
+
+```bash
+# this should be 3.10.5
+python --version
+```
+
+If the Python version is some other number, install `3.10.5`. Using [PyEnv](https://github.com/pyenv/pyenv) worked for us, as Conda had difficulties finding that specific version of Python on some devices.
 
 ```bash
 # create the virtual environment
