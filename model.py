@@ -22,52 +22,43 @@ from PIL import Image
 data_dir = r"./data/images/"
 # Neither absolute nor relative path detects images in the directory
 
+#load csv
 csv = pd.read_csv("data/log.csv")
 
-# get only labels
+# the df of angles & convert to np arr
 angles_ = csv.get(["angle"])
 angles = np.array(angles_['angle'].tolist())
-# print(labels)
 
+# the df of image addresses & convert to np arr
 centers_ = csv.get(["center"])
-centers = centers_['center'].tolist()
-# get dataframe with image path and angle
-df = csv.loc[:,['center','angle']]
-# print(df)
-# has shape (N, H*W*3) for N images
-images = np.array([np.array(Image.open(f"data/images/{f}")).ravel() for f in centers])
-#dataset = tf.keras.utils.image_dataset_from_directory(
-#    directory = data_dir,
-#    labels = angles,
-#    image_size=(160, 320))
-# ValueError: Expected the lengths of `labels` to match the number of files in the target directory.
-# len(labels) is 3404 while we found 0 files in directory data/images/.
-print(dataset)
-#dataset = tf.keras.preprocessing.image_dataset_from_directory(
-#    data_dir, image_size=(320, 160), batch_size=64
-#)
+centers = np.array(centers_['center'].tolist())
+#centers_['center'].tolist() 
 
-#DOES NOT WORK YET
-#train_data_gen = image_generator.flow_from_dataframe(dataframe=train_df,
-#                                                     x_col='filename',
-#                                                     y_col='regression_val',
-#                                                     batch_size=BATCH_SIZE,
-#                                                     shuffle=True,
-#                                                     target_size=(IMG_HEIGHT, IMG_WIDTH))
-# Need assistance loading data:
-# Deleted left and Right images to simplify the problem
-# Has labels loaded from CSV file
-# Cannot load images and labels imto a datagenerator 
+
+# get dataframe with image path and angle
+#df = csv.loc[:,['center','angle']]
+# print(df)
+
+N = 3404
+H = 160
+W = 320
+# images has shape (N, H*W*3) for N images
+images = np.array([np.array(Image.open(f"data/images/{f}")).ravel() for f in centers])
+#print(images)
 
 # Make training/testing data
-x_train = dataset[:,:] # ADD
-y_train = dataset[:,:] # CORRECT
-x_test = dataset[:,:] # RANGES
-y_test = dataset[:,:] # HERE
+num_images = len(images)
+train_test_split = .9
 
+x_train = images[0:int(train_test_split*num_images)]
+y_train = centers[0:int(train_test_split*num_images)]
+x_test = images[int(train_test_split*num_images):num_images]
+y_test = centers[int(train_test_split*num_images):num_images]
+
+# Print shape of train data
 print(x_train.shape)
 print(y_train.shape)
- 
+# Print shape of test data
 print(x_test.shape)
 print(y_test.shape)
 
@@ -84,10 +75,13 @@ model.add(Dense(1))
 # compile model
 model.compile(loss=MeanSquaredError(), optimizer='adam', metrics=['accuracy']) #asdg
 
+#prints out a summary of the model layers
 print(model.summary())
 
+#Train the model
 model.fit(x_train, y_train, epochs=100, batch_size=20)
 
+#evaluate model on test data and print the acc
 accuracy = model.evaluate(x_test, y_test)
 print('Accuracy: %.2f' % (accuracy*100))
 
