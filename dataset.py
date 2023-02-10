@@ -43,7 +43,7 @@ def adjust_brightness(image_filename):
     dimmer = tf.image.adjust_brightness(img, -0.3)
     plt.imshow(dimmer)
     plt.savefig(f'data/images/{image_filename}_dimmer.jpg')
-    df = pd.DataFrame([[f'{image_filename}_brighter.jpg', None, None, angle, speed], [f'{image_filename}_dimmmer.jpg', None, None, angle, speed]], columns=labels.columns)
+    df = pd.DataFrame([[f'{image_filename}_brighter.jpg', None, None, angle, speed], [f'{image_filename}_dimmer.jpg', None, None, angle, speed]], columns=labels.columns)
     return df
 
 def visualize(original, augmented):
@@ -57,13 +57,21 @@ def visualize(original, augmented):
   plt.imshow(augmented)
   plt.show()
 
-def test(x):
-    print("this is in the child process")
-    sys.stdout.flush()
+def compare_datasets(og_labels, labels):
+    fig = plt.figure()
+    plt.subplot(1,2,1)
+    plt.title('Original Dataset')
+    plt.hist(og_labels['angle'], bins=10)
+    plt.subplot(1,2,2)
+    plt.title('Augmented Dataset')
+    plt.hist(labels['angle'], bins=10)
+    plt.show()
 
 def main():
     labels = pd.read_csv("data/log.csv", index_col=0)
-    #plot_histogram(df['angle'], 10)
+    og_labels = labels.loc[~labels['center'].str.contains('dimmer')]
+    og_labels = og_labels.loc[~og_labels['center'].str.contains('brighter')]
+    #compare_datasets(og_labels, labels)
     non_zero_labels = labels.loc[labels['angle'] != 0]
     labels_lst = non_zero_labels.center.to_list()
     with mp.Pool(7) as pool:
@@ -72,6 +80,7 @@ def main():
         labels = pd.concat([labels, aug_labels], ignore_index=True)
         labels.to_csv("data/log.csv")
         print(labels)
+    labels.to_csv("data/log.csv")
 
 
 if __name__ == "__main__":
