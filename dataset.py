@@ -4,7 +4,8 @@ from matplotlib import pyplot as plt
 import matplotlib.image as mpimg
 import tensorflow as tf
 import os
-import multiprocess as mp
+import multiprocessing as mp
+import sys
 
 '''
 TO DO:
@@ -21,40 +22,29 @@ def plot_histogram(data, num_bins):
     plt.show()
 
 
-def adjust_brightness():
-    labels = pd.read_csv("data/log.csv")
+def adjust_brightness(image_filename):
+    labels = pd.read_csv("data/log.csv", index_col=0)
     #plot_histogram(df['angle'], 10)
     non_zero_labels = labels.loc[labels['angle'] != 0]
     length = len(non_zero_labels)
-    counter = 0
-    for image_filename in non_zero_labels.center.to_list():
-        angle = non_zero_labels.loc[non_zero_labels['center'] == image_filename]
-        angle = angle['angle'].to_list()[0]
-        speed = non_zero_labels.loc[non_zero_labels['center'] == image_filename]
-        speed = speed['speed'].to_list()[0]
+    angle = non_zero_labels.loc[non_zero_labels['center'] == image_filename]
+    angle = angle['angle'].to_list()[0]
+    speed = non_zero_labels.loc[non_zero_labels['center'] == image_filename]
+    speed = speed['speed'].to_list()[0]
 
-        image_filename = os.path.splitext(image_filename)[0]
+    image_filename = os.path.splitext(image_filename)[0]
 
-        if f'{image_filename}_brighter.jpg' in non_zero_labels['center'].values:
-            continue
-        img = mpimg.imread(f'data/images/{image_filename}.jpg')
-        brighter = tf.image.adjust_brightness(img, 0.3)
-        plt.imshow(brighter)
-        plt.savefig(f'data/images/{image_filename}_brighter.jpg')
-        dimmer = tf.image.adjust_brightness(img, -0.3)
-        plt.imshow(dimmer)
-        plt.savefig(f'data/images/{image_filename}_dimmer.jpg')
-        labels.loc[len(labels.index)] = [f'{image_filename}_brighter.jpg', None, None, angle, speed]
-        counter += 1        
-        print(f'{counter}/{length}')
-    
-    pool = mp.Pool() #creates a pool of process, controls worksers
-    #the pool.map only accepts one iterable, so use the partial function
-    #so that we only need to deal with one variable.
-    results = pool.map(processInput, non_zero_labels.center.to_list()) #make our results with a map call
-    pool.close() #we are not adding any more processes
-    pool.join() #tell it to wait until all threads are done before going on
-    labels.to_csv('data/log.csv', index=0)
+    if f'{image_filename}_brighter.jpg' in non_zero_labels['center'].values:
+        return
+    img = mpimg.imread(f'data/images/{image_filename}.jpg')
+    brighter = tf.image.adjust_brightness(img, 0.3)
+    plt.imshow(brighter)
+    plt.savefig(f'data/images/{image_filename}_brighter.jpg')
+    dimmer = tf.image.adjust_brightness(img, -0.3)
+    plt.imshow(dimmer)
+    plt.savefig(f'data/images/{image_filename}_dimmer.jpg')
+    df = pd.DataFrame([[f'{image_filename}_brighter.jpg', None, None, angle, speed], [f'{image_filename}_dimmmer.jpg', None, None, angle, speed]], columns=labels.columns)
+    return df
 
 def visualize(original, augmented):
   fig = plt.figure()
@@ -67,14 +57,21 @@ def visualize(original, augmented):
   plt.imshow(augmented)
   plt.show()
 
-def main():
+def test(x):
+    print("this is in the child process")
+    sys.stdout.flush()
 
-    labels = pd.read_csv("data/log.csv")
+def main():
+    labels = pd.read_csv("data/log.csv", index_col=0)
     #plot_histogram(df['angle'], 10)
     non_zero_labels = labels.loc[labels['angle'] != 0]
-    adjust_brightness()
-
-
+    labels_lst = non_zero_labels.center.to_list()
+    with mp.Pool(7) as pool:
+        pool = pool.map(adjust_brightness, labels_lst)
+        aug_labels = pd.concat(pool, ignore_index=True)
+        labels = pd.concat([labels, aug_labels], ignore_index=True)
+        labels.to_csv("data/log.csv")
+        print(labels)
 
 
 if __name__ == "__main__":
