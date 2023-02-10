@@ -11,7 +11,14 @@ Shared repository for the onboarding project for new members of the CEV autonomy
 
 ## Setup
 
-Setting up the environment is quite tricky because TensorFlow does not have native support for Apple M1 Chips. The following commands will set up a virtual environment and install the correct packages to run the code.
+Setting up the environment is quite tricky because TensorFlow does not have native support for Apple M1 Chips. The following commands will set up a virtual environment and install the correct packages to run the code. Note that this setup depends heavily on the specific Python version. We aren't sure exactly which versions do or don't work and why, but we know all of the setup works with Python `3.10.5`.
+
+```bash
+# this should be 3.10.5
+python --version
+```
+
+If the Python version is some other number, install `3.10.5`. Using [PyEnv](https://github.com/pyenv/pyenv) worked for us, as Conda had difficulties finding that specific version of Python on some devices.
 
 ```bash
 # create the virtual environment
@@ -54,6 +61,16 @@ The rest of the packages can be installed with `pip install -r requirements.txt`
 The dataset can be downloaded from [this Kaggle notebook](https://www.kaggle.com/datasets/andy8744/udacity-self-driving-car-behavioural-cloning?select=self_driving_car_dataset_jungle), and has a lot of images with associated direction labels. The images seem to be frames excerpted from a video, and a different analysis that Adams showed us revealed that the vast majority of the directions are pointing straight forward, which will need to be taken into account when dividing the images into training, validation, and testing sets.
 
 The data is stored in the `data/` directory, with images in `data/images/` and a `.csv` file linking each image with a direction number value `data/labels.csv`. The labels were downloaded from the above Kaggle notebook, but had absolute paths to the image files that needed to be cleaned up.
+
+We are implementing data augmentation in order to reduce the bias toward a 0 degree steering angle for all outputs. The methods we will be attempting are the following
+- color changing (black and white, red/blue/green color shift, etc.)
+- blur
+- shear + crop
+- brightness adjusting
+- saturation
+- contrast
+
+We are not augmenting the data by flipping the image, as this will put the center lines of the road on the right side of the driver, which will mess up the steering angle calculations.
 
 ## Progress
 
