@@ -40,6 +40,17 @@ def augment_brightness(tup: tuple): # tup should be in form (filename, angle)
 
     # save to datasets
     return ([np.ravel(brighter/255), np.ravel(dimmer/255)], [angle, angle])
+
+def augment_saturation(tup: tuple): # tup should be in form (filename, angle)
+    filename, angle = tup
+    image = mpimg.imread(f'data/images/{filename}')
+
+    # perform augmentations
+    sat = tf.image.adjust_brightness(image, 4)
+    usat = tf.image.adjust_brightness(image, -4)
+
+    # save to datasets
+    return ([np.ravel(sat/255), np.ravel(usat/255)], [angle, angle])
     
 # load image files
 def load_data():
@@ -59,7 +70,7 @@ def load_data():
         angles = np.array([x[1] for x in results])
         IMAGES_t.extend(np.reshape(images, (images.shape[0]*images.shape[1], -1)))
         ANGLES_t.extend(np.ravel(angles))
-    for aug_func in [augment_brightness]:
+    for aug_func in [augment_brightness, augment_saturation]:
         with mp.Pool(7) as pool:
             results = pool.map(aug_func, zip(nonzero_filenames, nonzero_angles))
             images = np.array([x[0] for x in results])
