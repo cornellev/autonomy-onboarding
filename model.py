@@ -6,43 +6,28 @@ from keras.losses import MeanSquaredError
 import pandas as pd
 import numpy as np
 from PIL import Image
-#from keras import preprocessing
-#from preprocessing import image.ImageDataGenerator
-
-# https://www.tensorflow.org/tutorials/load_data/pandas_dataframe
-# https://medium.com/analytics-vidhya/fastai-image-regression-age-prediction-based-on-image-68294d34f2ed
 
 
-# https://stackoverflow.com/questions/59568143/neural-network-with-float-labels
-# https://www.tensorflow.org/tutorials/keras/regression
-# https://keras.io/api/data_loading/
-# https://stackoverflow.com/questions/62877412/how-to-load-image-data-for-regression-with-keras
-# load the dataset
-
+#-----------------load the dataset-----------------
 data_dir = r"./data/images/"
-# Neither absolute nor relative path detects images in the directory
 
-#load csv
+#load csv as pandas dataframe(df)
 csv = pd.read_csv("data/log.csv")
 
-# the df of angles & convert to np arr
+# get the df of angles & convert to np arr
 angles_ = csv.get(["angle"])
 angles = np.array(angles_['angle'].tolist())
 
-# the df of image addresses & convert to np arr
+# get the df of image addresses & convert to np arr
 centers_ = csv.get(["center"])
 centers = np.array(centers_['center'].tolist())
-#centers_['center'].tolist() 
 
-
-# get dataframe with image path and angle
-#df = csv.loc[:,['center','angle']]
-# print(df)
-
+#N = num images, H = height of image, W = width of image
 N = 3404
 H = 160
 W = 320
-# images has shape (N, H*W*3) for N images
+image_size = H*W*3
+# images arr has shape (N, H*W*3) for N images
 images = np.array([np.array(Image.open(f"data/images/{f}")).ravel() for f in centers])
 #print(images)
 
@@ -61,14 +46,11 @@ print(y_train.shape)
 # Print shape of test data
 print(x_test.shape)
 print(y_test.shape)
-
-DenseLayerSize = 320*160*3
-
-# MAKING MODEL WOO
+#-----------------End loading the dataset-----------------
+#--------------------MAKING MODEL WOO---------------------
 model = Sequential()
-model.add(keras.Input(shape=(320,160,3)))
-model.add(Flatten())
-model.add(Dense(DenseLayerSize, activation='relu', kernel_initializer='he_uniform'))
+model.add(keras.Input(shape=(image_size)))
+model.add(Dense(image_size, activation='relu', kernel_initializer='he_uniform'))
 model.add(Dense(10, activation='softmax'))
 model.add(Dense(1))
 
@@ -86,4 +68,4 @@ accuracy = model.evaluate(x_test, y_test)
 print('Accuracy: %.2f' % (accuracy*100))
 
 # ADD PREDICTING Values
-
+y_pred = model.predict(x_test)
