@@ -21,26 +21,69 @@ TO DO:
 IMAGES = []
 ANGLES = []
 
-# load image files
-csv = pd.read_csv("data/log.csv")
-filenames = csv["center"].tolist()
-angles = csv["angle"].tolist()
-
 # add entries into dataset; augment conditionally
 # TODO shuffle the filenames to screw with stuff
-for i, filename in enumerate(filenames):
-    angle = angles[i]
+#for i, filename in enumerate(filenames):
+
+def populate_dataset(tup: tuple): # tup should be in form (filename, angle)
+    filename, angle = tup
     image = mpimg.imread(f'data/images/{filename}')
-    image /= 255
+    return ([np.ravel(image/255)], [angle])
+
+def augment_brightness(tup: tuple): # tup should be in form (filename, angle)
+    filename, angle = tup
+    image = mpimg.imread(f'data/images/{filename}')
 
     # perform augmentations
-    ...
+    brighter = tf.image.adjust_brightness(image, 0.3)
+    dimmer = tf.image.adjust_brightness(image, -0.3)
 
     # save to datasets
-    IMAGES.append(np.ravel(image))
-    ANGLES.append(angle)
+    return ([np.ravel(brighter/255), np.ravel(dimmer/255)], [angle, angle])
+    
+# load image files
+def load_data():
+    IMAGES_t = []
+    ANGLES_t = []
+    csv = pd.read_csv("data/log.csv")
+    filenames = csv["center"].tolist()
+    angles = csv["angle"].tolist()
+    csv = csv.loc[csv['angle'] != 0]
+    nonzero_filenames = csv["center"].tolist()
+    nonzero_angles = csv["angle"].tolist()
+    
+    #load initial
+    with mp.Pool(7) as pool:
+        results = pool.map(populate_dataset, zip(filenames, angles))
+        images = np.array([x[0] for x in results])
+        angles = np.array([x[1] for x in results])
+        IMAGES_t.extend(np.reshape(images, (images.shape[0]*images.shape[1], -1)))
+        ANGLES_t.extend(np.ravel(angles))
+    for aug_func in [augment_brightness]:
+        with mp.Pool(7) as pool:
+            results = pool.map(aug_func, zip(nonzero_filenames, nonzero_angles))
+            images = np.array([x[0] for x in results])
+            angles = np.array([x[1] for x in results])
+            IMAGES_t.extend(np.reshape(images, (images.shape[0]*images.shape[1], -1)))
+            ANGLES_t.extend(np.ravel(angles))
+    IMAGES[:] = IMAGES_t
+    ANGLES[:] = ANGLES_t
+    return IMAGES, ANGLES
 
 # normalize the data?
+
+
+
+
+
+def compare_images(image, brighter, dimmer):
+    plt.subplot(1,3,1)
+    plt.imshow(brighter)
+    plt.subplot(1,3,2)
+    plt.imshow(image)
+    plt.subplot(1,3,3)
+    plt.imshow(dimmer)
+    plt.show()
 
 def plot_histogram(data, num_bins):
     plt.hist(data['angle'], bins=num_bins)
@@ -107,4 +150,4 @@ def main():
 
 
 if __name__ == "__main__":
-    ...
+    load_data()
