@@ -49,8 +49,12 @@ print(y_test.shape)
 #-----------------End loading the dataset-----------------
 #--------------------MAKING MODEL WOO---------------------
 model = Sequential()
-model.add(keras.Input(shape=(image_size)))
-model.add(Dense(image_size, activation='relu', kernel_initializer='he_uniform'))
+model.add(keras.layers.InputLayer(input_shape=(image_size)))
+model.add(Dense(1024, activation='relu', kernel_initializer='he_uniform'))
+model.add(Dense(512, activation='softmax', kernel_initializer='he_uniform'))
+model.add(Dense(256, activation='relu', kernel_initializer='he_uniform'))
+model.add(Dense(128, activation='softmax', kernel_initializer='he_uniform'))
+model.add(Dense(64, activation='relu', kernel_initializer='he_uniform'))
 model.add(Dense(10, activation='softmax'))
 model.add(Dense(1))
 
