@@ -13,9 +13,34 @@ TO DO:
 - shear
 - blur
 - color changing
+
+- do in-memory
 '''
 
+# (320*160*3, n) for n images
+IMAGES = []
+ANGLES = []
 
+# load image files
+csv = pd.read_csv("data/log.csv")
+filenames = csv["center"].tolist()
+angles = csv["angle"].tolist()
+
+# add entries into dataset; augment conditionally
+# TODO shuffle the filenames to screw with stuff
+for i, filename in enumerate(filenames):
+    angle = angles[i]
+    image = mpimg.imread(f'data/images/{filename}')
+    image /= 255
+
+    # perform augmentations
+    ...
+
+    # save to datasets
+    IMAGES.append(np.ravel(image))
+    ANGLES.append(angle)
+
+# normalize the data?
 
 def plot_histogram(data, num_bins):
     plt.hist(data['angle'], bins=num_bins)
@@ -47,7 +72,6 @@ def adjust_brightness(image_filename):
     return df
 
 def visualize(original, augmented):
-  fig = plt.figure()
   plt.subplot(1,2,1)
   plt.title('Original image')
   plt.imshow(original)
@@ -58,7 +82,6 @@ def visualize(original, augmented):
   plt.show()
 
 def compare_datasets(og_labels, labels):
-    fig = plt.figure()
     plt.subplot(1,2,1)
     plt.title('Original Dataset')
     plt.hist(og_labels['angle'], bins=10)
@@ -84,4 +107,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    ...
