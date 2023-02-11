@@ -1,7 +1,9 @@
 import numpy as np
 
 def show_angle(image, angle, color=(1, 0, 0)):
-    """ Given an input image (as a numpy array) and associated steering angle (between -1 and 1), returns a new image with a vector plotted on it representing the associated steering angle. Uses color, which is optional and should be an array-like of length 3."""
+    """ Given an input image (as a numpy array) and associated steering angle (between -1 and 1), 
+    returns a new image with a vector plotted on it representing the associated steering angle. 
+    Uses color, which is optional and should be an array-like of length 3."""
     # angle is -1 to 1 and gets mapped to
     # -25 to 25 in the simulation, FACING UP
     angle = angle * 25
@@ -32,7 +34,8 @@ def show_angle(image, angle, color=(1, 0, 0)):
 
 
 def show_2_angles(image, angle_pred, angle_truth):
-    """ Given an input image (as a numpy array) and two steering angles (between -1 and 1), returns a new image with 2 vectors plotted on it representing both steering angles. """
+    """ Given an input image (as a numpy array) and two steering angles (between -1 and 1), 
+    returns a new image with 2 vectors plotted on it representing both steering angles. """
     # color prediction in red
     tmp = show_angle(image, angle_pred, color=(1, 0, 0))
     # color truth in green
@@ -42,7 +45,7 @@ def show_2_angles(image, angle_pred, angle_truth):
 
 if __name__ == "__main__":
     from PIL import Image
-
+    #load data from csv
     data = np.genfromtxt("data/log.csv",
         delimiter=",",
         dtype=str)
@@ -51,6 +54,7 @@ if __name__ == "__main__":
     filename = f"data/images/{row[0]}"
     image = np.array(Image.open(filename)) / 255.
     angle = float(row[-2])
-
+    # make visual (the lines)
     visual = show_2_angles(image, np.random.random()*2-1, angle)
+    # place visual on image and show image
     Image.fromarray((visual * 255).astype(np.uint8)).show()
