@@ -69,7 +69,7 @@ history = model.fit(x_train, y_train, epochs=num_epochs, batch_size=b_s, verbose
 #evaluate model on test data and print the acc
 loss, accuracy = model.evaluate(x_test, y_test)
 print('Accuracy: %.2f' % (accuracy*100))
-model.save('Model Saves/MNIST V1-' + str(acc*100))
+model.save('Model Saves/V1-' + str(acc*100))
 # ADD PREDICTING Values
 #y_pred = model.predict(x_test)
 
