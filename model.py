@@ -27,18 +27,19 @@ N = 3404
 H = 160
 W = 320
 image_size = H*W*3
-# images arr has shape (N, H*W*3) for N images
-images = np.array([np.array(Image.open(f"data/images/{f}")).ravel() for f in centers])
-#print(images)
+# images arr has shape (N, H,W,3) for N images
+images = np.array([np.array(Image.open(f"data/images/{f}")) for f in centers])
+#images = np.array([np.array(Image.open(f"data/images/{f}")).ravel() for f in centers])
+print(images)
 
 # Make training/testing data
 num_images = len(images)
 train_test_split = .9
 
 x_train = images[0:int(train_test_split*num_images)]
-y_train = centers[0:int(train_test_split*num_images)]
+y_train = angles[0:int(train_test_split*num_images)]
 x_test = images[int(train_test_split*num_images):num_images]
-y_test = centers[int(train_test_split*num_images):num_images]
+y_test = angles[int(train_test_split*num_images):num_images]
 
 # Print shape of train data
 print(x_train.shape)
@@ -48,15 +49,20 @@ print(x_test.shape)
 print(y_test.shape)
 #-----------------End loading the dataset-----------------
 #--------------------MAKING MODEL WOO---------------------
+ConvNum = 32
 model = Sequential()
-model.add(keras.layers.InputLayer(input_shape=(image_size)))
-model.add(Dense(1024, activation='relu', kernel_initializer='he_uniform'))
-model.add(Dense(512, activation='softmax', kernel_initializer='he_uniform'))
-model.add(Dense(256, activation='relu', kernel_initializer='he_uniform'))
-model.add(Dense(128, activation='softmax', kernel_initializer='he_uniform'))
-model.add(Dense(64, activation='relu', kernel_initializer='he_uniform'))
-model.add(Dense(10, activation='softmax'))
-model.add(Dense(1))
+model.add(keras.layers.InputLayer(input_shape=(160,320,3)))
+model.add(MaxPooling2D((3, 3)))
+model.add(Conv2D(ConvNum, (5, 5), activation='relu', kernel_initializer='he_uniform'))
+model.add(Conv2D(ConvNum, (5, 5), activation='relu', kernel_initializer='he_uniform'))
+model.add(Conv2D(ConvNum, (3, 3), activation='relu', kernel_initializer='he_uniform'))
+model.add(Conv2D(ConvNum, (3, 3), activation='relu', kernel_initializer='he_uniform'))
+model.add(Dense(1164, activation='relu', kernel_initializer='he_uniform'))
+model.add(Dense(100, activation='softmax', kernel_initializer='he_uniform'))
+model.add(Dense(50, activation='relu', kernel_initializer='he_uniform'))
+model.add(Dense(10, activation='softmax', kernel_initializer='he_uniform'))
+model.add(Dense(1, activation='relu', kernel_initializer='he_uniform'))
+
 
 # compile model
 model.compile(loss=MeanSquaredError(), optimizer='adam', metrics=['accuracy']) #asdg
