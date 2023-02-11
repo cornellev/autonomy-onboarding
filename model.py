@@ -61,11 +61,15 @@ model.compile(loss=MeanSquaredError(), optimizer='adam', metrics=['accuracy']) #
 print(model.summary())
 
 #Train the model
-model.fit(x_train, y_train, epochs=100, batch_size=20)
+num_epochs = 100
+b_s = 20
+history = model.fit(x_train, y_train, epochs=num_epochs, batch_size=b_s, verbose = 1)
+
 
 #evaluate model on test data and print the acc
-accuracy = model.evaluate(x_test, y_test)
+loss, accuracy = model.evaluate(x_test, y_test)
 print('Accuracy: %.2f' % (accuracy*100))
-
+model.save('Model Saves/MNIST V1-' + str(acc*100))
 # ADD PREDICTING Values
-y_pred = model.predict(x_test)
+#y_pred = model.predict(x_test)
+
