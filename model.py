@@ -6,21 +6,15 @@ from keras.losses import MeanSquaredError
 import pandas as pd
 import numpy as np
 from PIL import Image
-#from keras import preprocessing
-#from preprocessing import image.ImageDataGenerator
+
+from dataset import IMAGES, ANGLES
 
 # https://www.tensorflow.org/tutorials/load_data/pandas_dataframe
 # https://medium.com/analytics-vidhya/fastai-image-regression-age-prediction-based-on-image-68294d34f2ed
-
-
 # https://stackoverflow.com/questions/59568143/neural-network-with-float-labels
 # https://www.tensorflow.org/tutorials/keras/regression
 # https://keras.io/api/data_loading/
 # https://stackoverflow.com/questions/62877412/how-to-load-image-data-for-regression-with-keras
-# load the dataset
-
-data_dir = r"./data/images/"
-# Neither absolute nor relative path detects images in the directory
 
 #load csv
 csv = pd.read_csv("data/log.csv")
@@ -73,7 +67,7 @@ model.add(Dense(10, activation='softmax'))
 model.add(Dense(1))
 
 # compile model
-model.compile(loss=MeanSquaredError(), optimizer='adam', metrics=['accuracy']) #asdg
+model.compile(loss=MeanSquaredError(), optimizer='adam', metrics=['accuracy'])
 
 #prints out a summary of the model layers
 print(model.summary())
