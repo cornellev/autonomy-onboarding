@@ -13,8 +13,7 @@ TO DO:
 - shear
 - blur
 - color changing
-
-- do in-memory
+- contrast
 '''
 
 # (320*160*3, n) for n images
@@ -51,6 +50,17 @@ def augment_saturation(tup: tuple): # tup should be in form (filename, angle)
 
     # save to datasets
     return ([np.ravel(sat/255), np.ravel(usat/255)], [angle, angle])
+
+def augment_contrast(tup: tuple): # tup should be in form (filename, angle)
+    filename, angle = tup
+    image = mpimg.imread(f'data/images/{filename}')
+    seed = (1, 0)  # tuple of size (2,)
+    lower = tf.image.stateless_random_contrast(
+        image, lower=0.1, upper=0.2, seed=seed)
+    higher = tf.image.stateless_random_contrast(
+        image, lower=1.9, upper=2, seed=seed)
+    
+    return ([np.ravel(lower/255), np.ravel(higher/255)], [angle, angle])
     
 # load image files
 def load_data():
@@ -70,7 +80,7 @@ def load_data():
         angles = np.array([x[1] for x in results])
         IMAGES_t.extend(np.reshape(images, (images.shape[0]*images.shape[1], -1)))
         ANGLES_t.extend(np.ravel(angles))
-    for aug_func in [augment_brightness, augment_saturation]:
+    for aug_func in [augment_brightness, augment_saturation, augment_saturation]:
         with mp.Pool(7) as pool:
             results = pool.map(aug_func, zip(nonzero_filenames, nonzero_angles))
             images = np.array([x[0] for x in results])
@@ -161,4 +171,10 @@ def main():
 
 
 if __name__ == "__main__":
-    load_data()
+    #load_data()
+    img = mpimg.imread("data/images/center_2022_04_10_12_44_27_913.jpg")
+    for i in range(3):
+        seed = (1, 0)  # tuple of size (2,)
+        stateless_random_contrast = tf.image.stateless_random_contrast(
+            img, lower=0.1, upper=0.2, seed=seed)
+        visualize(img, stateless_random_contrast)
