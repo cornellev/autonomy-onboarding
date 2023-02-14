@@ -118,35 +118,6 @@ def compare_images(image, brighter, dimmer):
     plt.imshow(dimmer)
     plt.show()
 
-def plot_histogram(data, num_bins):
-    plt.hist(data['angle'], bins=num_bins)
-    plt.show()
-
-
-def adjust_brightness(image_filename):
-    labels = pd.read_csv("data/log.csv", index_col=0)
-    #plot_histogram(df['angle'], 10)
-    non_zero_labels = labels.loc[labels['angle'] != 0]
-    length = len(non_zero_labels)
-    angle = non_zero_labels.loc[non_zero_labels['center'] == image_filename]
-    angle = angle['angle'].to_list()[0]
-    speed = non_zero_labels.loc[non_zero_labels['center'] == image_filename]
-    speed = speed['speed'].to_list()[0]
-
-    image_filename = os.path.splitext(image_filename)[0]
-
-    if f'{image_filename}_brighter.jpg' in non_zero_labels['center'].values:
-        return
-    img = mpimg.imread(f'data/images/{image_filename}.jpg')
-    brighter = tf.image.adjust_brightness(img, 0.3)
-    plt.imshow(brighter)
-    plt.savefig(f'data/images/{image_filename}_brighter.jpg')
-    dimmer = tf.image.adjust_brightness(img, -0.3)
-    plt.imshow(dimmer)
-    plt.savefig(f'data/images/{image_filename}_dimmer.jpg')
-    df = pd.DataFrame([[f'{image_filename}_brighter.jpg', None, None, angle, speed], [f'{image_filename}_dimmer.jpg', None, None, angle, speed]], columns=labels.columns)
-    return df
-
 def visualize(original, augmented):
   plt.subplot(1,2,1)
   plt.title('Original image')
