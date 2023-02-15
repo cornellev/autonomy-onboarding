@@ -72,7 +72,16 @@ def augment_blur(tup: tuple): # tup should be in form (filename, angle)
     blurred_image = blur(image=image)
     
     return ([np.ravel(blurred_image/255)], [angle])
+
+def augment_color(tup: tuple): # tup should be in form (filename, angle)
+    filename, angle = tup
+    image = mpimg.imread(f'data/images/{filename}')
+    color_change = iaa.Sequential([iaa.ChangeColorTemperature(4000)])
+    color_image = color_change(image=image)
+    color_change = iaa.Sequential([iaa.ChangeColorTemperature(40000)])
+    color_image_v2 = color_change(image=image)
     
+    return ([np.ravel(color_image/255), np.ravel(color_image_v2/255)], [angle, angle])    
     
 # load image files
 def load_data():
@@ -92,7 +101,7 @@ def load_data():
         angles = np.array([x[1] for x in results])
         IMAGES_t.extend(np.reshape(images, (images.shape[0]*images.shape[1], -1)))
         ANGLES_t.extend(np.ravel(angles))
-    for aug_func in [augment_brightness, augment_saturation, augment_saturation, augment_blur]:
+    for aug_func in [augment_brightness, augment_saturation, augment_saturation, augment_blur, augment_color]:
         with mp.Pool(7) as pool:
             results = pool.map(aug_func, zip(nonzero_filenames, nonzero_angles))
             images = np.array([x[0] for x in results])
@@ -154,6 +163,6 @@ def main():
 
 
 if __name__ == "__main__":
-    #load_data()
-    img = mpimg.imread("data/images/center_2022_04_10_12_44_27_913.jpg")
-    augment_blur(("center_2022_04_10_12_44_27_913.jpg", 0))
+    load_data()
+    # img = mpimg.imread("data/images/center_2022_04_10_12_44_27_913.jpg")
+    # augment_color(("center_2022_04_10_12_44_27_913.jpg", 0))
