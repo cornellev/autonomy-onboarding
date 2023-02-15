@@ -65,7 +65,7 @@ model.add(Dense(1, activation='relu', kernel_initializer='he_uniform'))
 
 
 # compile model
-model.compile(loss=MeanSquaredError(), optimizer='adam', metrics=['accuracy']) #asdg
+model.compile(loss=MeanSquaredError(), optimizer=tf.keras.optimizers.legacy.Adam(), metrics=['accuracy']) #asdg
 
 #prints out a summary of the model layers
 print(model.summary())
